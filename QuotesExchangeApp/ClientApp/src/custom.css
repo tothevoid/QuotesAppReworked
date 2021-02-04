@@ -12,3 +12,207 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+
+
+/*migrated*/
+
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+    color: #fff;
+}
+/* Provide sufficient contrast against white background */
+a {
+    color: #fafafa;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.quotes-nav {
+    background-color: #12161c !important;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #000000;
+    background-color: #fff;
+    border-color: #000000;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    font-size: 13px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background-color: #fafafa;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+}
+
+.link a {
+    display: block; /* Ссылка как блочный элемент */
+    height: 100%; /* Высота на весь слой */
+}
+
+.nav-link a {
+    text-decoration: none; /* Убираем подчеркивание */
+    color: #fafafa;
+}
+
+    .nav-link a:hover {
+        text-decoration: none; /* Убираем подчеркивание */
+        color: #f0b90b; /* Цвет ссылки при наведении на нее курсора мыши */
+    }
+
+a:hover {
+    text-decoration: none; /* Убираем подчеркивание */
+    color: #f0b90b; /* Цвет ссылки при наведении на нее курсора мыши */
+}
+
+.form-ticker-right input {
+    height: 100%;
+    width: 100%;
+    border: none;
+    padding: 5px;
+    background: #fff;
+    color: #f0b90b;
+}
+
+    .form-ticker-right input:hover {
+        background: #f0b90b;
+        color: #fff;
+    }
+
+.form-ticker input {
+    height: 100%;
+    width: 100%;
+    border: solid;
+    border-width: 1px;
+    padding: 5px;
+    background: #fafafa;
+    color: #f0b90b;
+}
+
+    .form-ticker input:hover {
+        background: #f0b90b;
+        color: #fafafa;
+    }
+
+.col-xs-12 {
+    white-space: nowrap !important;
+    max-width: 100%;
+    overflow: auto;
+}
+
+.col-xs-3 {
+    float: none !important;
+    display: inline-block !important;
+}
+
+    .col-xs-3 a {
+        height: 100px;
+        display: block;
+        margin-top: 10px;
+        padding: 10px
+    }
+
+.custom-table {
+    background-color: #fff;
+}
+
+.table-company {
+    table-layout: fixed;
+}
+
+.company-name-col {
+    width: 20%;
+}
+
+.company-content-col {
+    width: 80%;
+}
+
+.charts-div {
+    background-color: #fff;
+    padding: 10px;
+}
+
+thead {
+    background-color: #fafafa;
+}
+
+.login-btn {
+    width: 100%;
+    color: #fafafa;
+    background-color: #e5b10b;
+    border-color: #e5b10b;
+}
+
+.login-btn:hover {
+    background-color: #f0b90b;
+    border-color: #e5b10b;
+}
+
+h5 {
+    margin: 25px;
+}
+
+.div-center {
+    text-align: center;
+}
+
+.custom-input {
+    background: #fff;
+    color: #f0b90b;
+    border-color: #f0b90b;
+    border: solid;
+    border-width: 1px;
+}
