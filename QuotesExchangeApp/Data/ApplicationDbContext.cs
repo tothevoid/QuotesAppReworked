@@ -9,6 +9,11 @@ namespace QuotesExchangeApp.Data.Migrations
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Quote> Quotes { get; set; }
+        public DbSet<Source> Sources { get; set; }
+        public DbSet<SupportedCompany> SupportedCompanies { get; set; }
+
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)

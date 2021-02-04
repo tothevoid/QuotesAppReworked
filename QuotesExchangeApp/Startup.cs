@@ -9,8 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 using QuotesExchangeApp.Data.Migrations;
+using QuotesExchangeApp.Jobs;
 using QuotesExchangeApp.Models;
+using QuotesExchangeApp.Quartz;
 
 namespace QuotesExchangeApp
 {
@@ -38,6 +43,24 @@ namespace QuotesExchangeApp
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+
+            services.AddSingleton<IJobFactory, JobFactory>();
+
+            services.Add(new ServiceDescriptor(typeof(FinnhubGrabberJob), typeof(FinnhubGrabberJob), ServiceLifetime.Transient));
+            services.Add(new ServiceDescriptor(typeof(MoexGrabberJob), typeof(MoexGrabberJob), ServiceLifetime.Transient));
+
+            services.AddSingleton(provider =>
+            {
+                var schedulerFactory = new StdSchedulerFactory();
+                var scheduler = schedulerFactory.GetScheduler().Result;
+                scheduler.JobFactory = provider.GetService<IJobFactory>();
+
+                scheduler.Start();
+
+                return scheduler;
+            });
+            services.AddTransient<ISchedulerFactory, StdSchedulerFactory>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
