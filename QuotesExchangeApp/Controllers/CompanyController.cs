@@ -12,7 +12,7 @@ namespace QuotesExchangeApp.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CompanyController : ControllerBase
     {
         private readonly ILogger<QuotesController> _logger;

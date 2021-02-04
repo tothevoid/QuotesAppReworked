@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using QuotesExchangeApp.Data.Migrations;
 using QuotesExchangeApp.Models;
@@ -10,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace QuotesExchangeApp.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class QuotesController : ControllerBase
     {
         private readonly ILogger<QuotesController> _logger;
@@ -25,9 +26,19 @@ namespace QuotesExchangeApp.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Quote> Get()
+        public dynamic Get()
         {
-            return _context.Quotes.ToList();
+            var res = _context.Quotes.Include(x => x.Company).ToList().GroupBy(x => x.Company.Id, (key, g) => g.OrderByDescending(e => e.Date).First());
+            return (from quote in res.ToList()
+                select new
+                {
+                    QuoteId = quote.Id,
+                    CompanyId = quote.Company.Id,
+                    CompanyName = quote.Company.Name,
+                    CompanyTicker = quote.Company.Ticker,
+                    QuotePrice = quote.Price,
+                    QuoteDate = quote.Date,
+                }).ToList();
         }
     }
 }
