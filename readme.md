@@ -3,5 +3,5 @@
 How to run:
 
 * dotnet restore
-* Update-Migration
+* Update-Database
 * dotnet run
