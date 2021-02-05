@@ -32,7 +32,7 @@ namespace QuotesExchangeApp.Jobs
 
             dynamic usd = JObject.Parse(usdRateJson);
             string usdRate = usd.rates.USD;
-            float multiplier = float.Parse(usdRate.Replace(".", ","));
+            float multiplier = float.Parse(usdRate);
 
             return multiplier;
         }
@@ -42,13 +42,31 @@ namespace QuotesExchangeApp.Jobs
             float multiplier = GetCurrencyMultiplier();
             var sourceMOEX = _context.Sources.FirstOrDefault(x => x.Name == moexSourceName);
             var moexCompanies = _context.SupportedCompanies.Include(x => x.Company).Where(x => x.Source.Name == moexSourceName).Select(x => x.Company);
+
+            var isFirstLaunch = false;
+
+            if (!moexCompanies.Any())
+            {
+                moexCompanies = _context.Companies;
+                isFirstLaunch = true;
+            }
+
             foreach (var company in moexCompanies)
             {
                 var response = new WebClient().DownloadString(sourceMOEX.ApiUrl + company.Ticker + ".json");
 
                 dynamic moex = JObject.Parse(response);
+                var res = moex.marketdata.data;
+                if (moex.marketdata.data.Count == 0) continue;
                 string moexstring = moex.marketdata.data[2][12];
-                float rawPrice = float.Parse(moexstring.Replace(".", ","));
+                if (moexstring == null) continue;
+                float rawPrice = float.Parse(moexstring);
+                if (rawPrice <= 0) continue;
+                if (isFirstLaunch)
+                {
+                    _context.SupportedCompanies.Add(new SupportedCompany { Company = company, Source = sourceMOEX });
+                }
+
                 float price = rawPrice * multiplier; //Перевод из рублей в доллары
 
                 Quote newquote = new Quote

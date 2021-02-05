@@ -31,15 +31,29 @@ namespace QuotesExchangeApp.Jobs
         {
             var sourceFinnhub = _context.Sources.FirstOrDefault(x => x.Name == finnhubSourceName);
             var finnhubCompanies = _context.SupportedCompanies.Include(x => x.Company).Where(x => x.Source.Name == finnhubSourceName).Select(x => x.Company);
+            var isFirstLaunch = false;
+            
+            if (!finnhubCompanies.Any())
+            {
+                isFirstLaunch = true;
+                finnhubCompanies = _context.Companies;
+            }
+            
             foreach (var company in finnhubCompanies)
             {
                 string response = new WebClient().DownloadString(sourceFinnhub.ApiUrl + company.Ticker + Configuration["FinnhubToken"]);
                 string rawPrice = JObject.Parse(response).SelectToken("c").ToString();
+                var price = float.Parse(rawPrice);
+                if (price <= 0) continue;
+                if (isFirstLaunch)
+                {
+                    _context.SupportedCompanies.Add(new SupportedCompany { Company = company, Source = sourceFinnhub });
+                }
 
                 Quote newquote = new Quote
                 {
                     Company = company,
-                    Price = float.Parse(rawPrice),
+                    Price = price,
                     Date = DateTime.Now,
                     Source = sourceFinnhub
                 };

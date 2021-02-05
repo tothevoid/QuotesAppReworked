@@ -27,6 +27,20 @@ namespace QuotesExchangeApp.Controllers
         [HttpGet]
         public IEnumerable<Company> Get()
         {
+            //var entitties = _context.SupportedCompanies.ToList();
+            //foreach (var ent in entitties)
+            //{
+            //    _context.SupportedCompanies.Remove(ent);
+            //}
+
+            //var qu = _context.Quotes.ToList();
+            //foreach (var ent in qu)
+            //{
+            //    _context.Quotes.Remove(ent);
+            //}
+
+            //_context.SaveChanges();
+
             return _context.Companies.ToList();
         }
     }
