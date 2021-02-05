@@ -14,6 +14,9 @@ export class Quotes extends Component {
     }
 
     static renderedQuotesTable(quotes) {
+        const formatDate = (date) => date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() 
+            + " " + date.getHours() + ":" + date.getMinutes();
+
         if (!quotes)
             return <p>Nothing</p>
         else {
@@ -27,10 +30,10 @@ export class Quotes extends Component {
                         {
                             quotes.map((quotes, ix) => 
                                 <tr key={ix}>
-                                    <td>{quotes.companyName}</td>
-                                    <td>{quotes.companyTicker}</td>
-                                    <td>{quotes.quotePrice}$</td>
-                                    <td>{quotes.quoteDate}</td>
+                                    <td>{quotes.name}</td>
+                                    <td>{quotes.ticker}</td>
+                                    <td>{quotes.lastQuoteValue}$</td>
+                                    <td>{formatDate(new Date(quotes.lastQuoteDate))}</td>
                                 </tr>
                             )
                         }

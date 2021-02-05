@@ -36,20 +36,5 @@ namespace QuotesExchangeApp.Controllers
                     Date = x.Date
                 }).ToList();
         }
-
-        [HttpGet]
-        public List<ChartCompany> Get()
-        {
-            var res = _context.Quotes.Include(x => x.Company).ToList().GroupBy(x => x.Company.Id, (key, g) => g.OrderByDescending(e => e.Date).First());
-            return (from quote in res.ToList()
-                    select new ChartCompany
-                    {
-                        Id = quote.Company.Id,
-                        Name = quote.Company.Name,
-                        Ticker = quote.Company.Ticker,
-                        LastQuoteValue = quote.Price,
-                        LastQuoteDate = quote.Date,
-                    }).ToList();
-        }
     }
 }

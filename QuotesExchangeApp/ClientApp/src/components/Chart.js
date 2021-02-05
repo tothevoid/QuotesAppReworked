@@ -53,7 +53,6 @@ export class Chart extends Component {
     }
 
     onSpanSelected = (button) => {
-        debugger;
         if (button !== this.state.currentButton){
             this.setState({ currentButton: button});
             this.getQuotes(this.state.currentCompany, button);
@@ -154,7 +153,7 @@ export class Chart extends Component {
     }
     
     async getCompanies() {
-        const response = await fetch('api/chart');
+        const response = await fetch('api/quotes');
         const data = await response.json();
         if (data && data.length !== 0){
             const currentCompany = data[0];

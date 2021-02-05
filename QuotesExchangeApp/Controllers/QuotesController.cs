@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using QuotesExchangeApp.Data.Migrations;
-using QuotesExchangeApp.Models;
-using System;
+using QuotesExchangeApp.Models.Frontend;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace QuotesExchangeApp.Controllers
 {
@@ -26,19 +23,18 @@ namespace QuotesExchangeApp.Controllers
         }
 
         [HttpGet]
-        public dynamic Get()
+        public List<ChartCompany> Get()
         {
             var res = _context.Quotes.Include(x => x.Company).ToList().GroupBy(x => x.Company.Id, (key, g) => g.OrderByDescending(e => e.Date).First());
             return (from quote in res.ToList()
-                select new
-                {
-                    QuoteId = quote.Id,
-                    CompanyId = quote.Company.Id,
-                    CompanyName = quote.Company.Name,
-                    CompanyTicker = quote.Company.Ticker,
-                    QuotePrice = quote.Price,
-                    QuoteDate = quote.Date,
-                }).ToList();
+                    select new ChartCompany
+                    {
+                        Id = quote.Company.Id,
+                        Name = quote.Company.Name,
+                        Ticker = quote.Company.Ticker,
+                        LastQuoteValue = quote.Price,
+                        LastQuoteDate = quote.Date,
+                    }).ToList();
         }
     }
 }
