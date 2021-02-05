@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using QuotesExchangeApp.Jobs;
 using QuotesExchangeApp.Quartz;
+using System.Globalization;
 
 namespace QuotesExchangeApp
 {

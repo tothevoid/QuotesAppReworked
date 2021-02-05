@@ -7,6 +7,7 @@ using QuotesExchangeApp.Data.Migrations;
 using QuotesExchangeApp.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace QuotesExchangeApp.Jobs
         public List<Company> Companies { get; set; }
         private readonly ApplicationDbContext _context;
         private readonly IHubContext<QuotesHub> _hubContext;
+        private readonly CultureInfo _usCulture = new CultureInfo("en-US");
 
         public MoexGrabberJob(ApplicationDbContext db, IHubContext<QuotesHub> hubContext)
         {
@@ -32,7 +34,7 @@ namespace QuotesExchangeApp.Jobs
 
             dynamic usd = JObject.Parse(usdRateJson);
             string usdRate = usd.rates.USD;
-            float multiplier = float.Parse(usdRate);
+            float multiplier = float.Parse(usdRate, _usCulture);
 
             return multiplier;
         }
@@ -60,7 +62,7 @@ namespace QuotesExchangeApp.Jobs
                 if (moex.marketdata.data.Count == 0) continue;
                 string moexstring = moex.marketdata.data[2][12];
                 if (moexstring == null) continue;
-                float rawPrice = float.Parse(moexstring);
+                float rawPrice = float.Parse(moexstring, _usCulture);
                 if (rawPrice <= 0) continue;
                 if (isFirstLaunch)
                 {

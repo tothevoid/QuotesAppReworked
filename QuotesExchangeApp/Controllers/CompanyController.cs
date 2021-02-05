@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QuotesExchangeApp.Data.Migrations;
 using QuotesExchangeApp.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace QuotesExchangeApp.Controllers
 {
@@ -25,23 +23,6 @@ namespace QuotesExchangeApp.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Company> Get()
-        {
-            //var entitties = _context.SupportedCompanies.ToList();
-            //foreach (var ent in entitties)
-            //{
-            //    _context.SupportedCompanies.Remove(ent);
-            //}
-
-            //var qu = _context.Quotes.ToList();
-            //foreach (var ent in qu)
-            //{
-            //    _context.Quotes.Remove(ent);
-            //}
-
-            //_context.SaveChanges();
-
-            return _context.Companies.ToList();
-        }
+        public IEnumerable<Company> Get() => _context.Companies.ToList();
     }
 }

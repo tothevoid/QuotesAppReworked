@@ -95,10 +95,10 @@ export class Chart extends Component {
                         <tr><th>Тикер</th><th>Цена</th><th>Дата</th></tr>
                     </thead>
                     <tbody>
-                        {companies.map((company, ix) => {
+                        {companies.map(company => {
                             const decorationClass = currentCompany.ticker === company.ticker?
                                 "company-selected company-item": "company-item"
-                            return <tr onClick={()=>this.onCompanySelected(company)} className={decorationClass} key={ix}>
+                            return <tr onClick={()=>this.onCompanySelected(company)} className={decorationClass} key={company.id}>
                                 <td>
                                     <div 
                                         className="form-ticker-right" >
@@ -155,8 +155,8 @@ export class Chart extends Component {
     async getCompanies() {
         const response = await fetch('api/quotes');
         const data = await response.json();
+        const currentCompany = this.state.currentCompany || data[0];
         if (data && data.length !== 0){
-            const currentCompany = data[0];
             this.setState({ companies: data, currentCompany: currentCompany});
             this.getQuotes(currentCompany, this.state.currentButton)
         }
