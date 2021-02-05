@@ -5,11 +5,13 @@ import { Home } from './components/Home';
 import { Companies } from './components/Companies';
 import { Counter } from './components/Counter';
 import { Quotes } from './components/Quotes';
+import { Chart } from './components/Chart';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 
 import './custom.css'
+
 
 export default class App extends Component {
   static displayName = App.name;
@@ -20,6 +22,7 @@ export default class App extends Component {
         <Route exact path='/' component={Home} />
         <Route path='/counter' component={Counter} />
         <Route path='/quotes' component={Quotes} />
+        <Route path='/chart' component={Chart} />
         <AuthorizeRoute path='/companies' component={Companies} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>

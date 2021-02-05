@@ -13,6 +13,51 @@ code {
   border-color: #1861ac;
 }
 
+.timespan-btn {
+    height: 100%;
+    width: 100%;
+    border: solid;
+    border-width: 1px;
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+    background: #fafafa;
+    color: #f0b90b;
+    height: 35px;
+    text-align: center;
+  
+}
+
+.timespan-btn:hover, .timespan-selected{
+    color: black;
+    background: #f0b90b;
+}
+
+.timespan-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 45px;
+}
+
+.company-item{
+    cursor: pointer;
+}
+
+.company-item:hover, .company-selected{
+    background-color: #f0b90b;
+}
+
+.company-item:hover input, .company-selected input{
+    background-color: transparent !important;
+    color: white !important;
+}
+
+
+/* .canvasjs-chart-container{
+    height: 300px !important;
+    width: 50% !important;
+} */
 
 
 /*migrated*/
@@ -98,23 +143,23 @@ body {
 }
 
 .link a {
-    display: block; /* Ссылка как блочный элемент */
-    height: 100%; /* Высота на весь слой */
+    display: block; /* пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+    height: 100%; /* пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ */
 }
 
 .nav-link a {
-    text-decoration: none; /* Убираем подчеркивание */
+    text-decoration: none; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
     color: #fafafa;
 }
 
     .nav-link a:hover {
-        text-decoration: none; /* Убираем подчеркивание */
-        color: #f0b90b; /* Цвет ссылки при наведении на нее курсора мыши */
+        text-decoration: none; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+        color: #f0b90b; /* пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ */
     }
 
 a:hover {
-    text-decoration: none; /* Убираем подчеркивание */
-    color: #f0b90b; /* Цвет ссылки при наведении на нее курсора мыши */
+    text-decoration: none; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+    color: #f0b90b; /* пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ */
 }
 
 .form-ticker-right input {
