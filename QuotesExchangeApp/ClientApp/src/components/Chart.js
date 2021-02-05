@@ -65,7 +65,7 @@ export class Chart extends Component {
             return <p>Nothing</p>
         else {
             const data = quotes.map(function (quote) {
-                return { x: new Date(quote.quoteDate), y: quote.quotePrice }
+                return { x: new Date(quote.date), y: quote.price }
             });
             const options = {
                 theme: "light2",
@@ -97,17 +97,17 @@ export class Chart extends Component {
                     </thead>
                     <tbody>
                         {companies.map((company, ix) => {
-                            const decorationClass = currentCompany.companyTicker === company.companyTicker?
+                            const decorationClass = currentCompany.ticker === company.ticker?
                                 "company-selected company-item": "company-item"
                             return <tr onClick={()=>this.onCompanySelected(company)} className={decorationClass} key={ix}>
                                 <td>
                                     <div 
                                         className="form-ticker-right" >
-                                        <div>{company.companyTicker}</div>
+                                        <div>{company.ticker}</div>
                                     </div>
                                 </td>
-                                <td>{company.quotePrice}$</td>
-                                <td>{formatDate(new Date(company.quoteDate))}</td>
+                                <td>{company.lastQuoteValue}$</td>
+                                <td>{formatDate(new Date(company.lastQuoteDate))}</td>
                             </tr>}
                         )}
                     </tbody>
@@ -137,7 +137,7 @@ export class Chart extends Component {
             : Chart.renderChart(this.state.quotes);
         const {currentCompany} = this.state;
         const title = (currentCompany) ?
-            <h3>Акции {currentCompany.companyName} ({currentCompany.companyTicker})</h3> :
+            <h3>Акции {currentCompany.name} ({currentCompany.ticker})</h3> :
             <h3>Chart</h3>
 
         return (
@@ -167,7 +167,7 @@ export class Chart extends Component {
         const response = await fetch('api/chart', {
             method: "post",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({companyId: company.companyId, mins: span.value})
+            body: JSON.stringify({companyId: company.id, mins: span.value})
         });
         const data = await response.json();
         this.setState({ quotes: data, loading: false });
