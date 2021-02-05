@@ -31,6 +31,8 @@ namespace QuotesExchangeApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
+
             services.AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlite(
                   Configuration.GetConnectionString("DefaultConnection")));
@@ -98,6 +100,7 @@ namespace QuotesExchangeApp
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<QuotesHub>("/hubs/quotes");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");

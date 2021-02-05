@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Quartz;
@@ -18,23 +19,18 @@ namespace QuotesExchangeApp.Jobs
         public List<Company> Companies { get; set; }
         private readonly string finnhubSourceName = "Finnhub";
         private readonly IConfiguration Configuration;
+        private readonly IHubContext<QuotesHub> _hubContext;
         private readonly ApplicationDbContext _context;
-        public FinnhubGrabberJob(ApplicationDbContext db, IConfiguration configuration)
+        public FinnhubGrabberJob(ApplicationDbContext db, IConfiguration configuration, IHubContext<QuotesHub> hubContext)
         {
             _context = db;
+            _hubContext = hubContext;
             Configuration = configuration;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
             var sourceFinnhub = _context.Sources.FirstOrDefault(x => x.Name == finnhubSourceName);
-
-            //var cpm = _context.Companies.Where(x => x.Name == "Apple").First();
-
-            //var ent = new SupportedCompany() { Source = sourceFinnhub, Company = cpm };
-            //_context.SupportedCompanies.Add(ent);
-            //_context.SaveChanges();
-
             var finnhubCompanies = _context.SupportedCompanies.Include(x => x.Company).Where(x => x.Source.Name == finnhubSourceName).Select(x => x.Company);
             foreach (var company in finnhubCompanies)
             {
@@ -53,6 +49,7 @@ namespace QuotesExchangeApp.Jobs
                 await Task.Delay(500);
             }
             await _context.SaveChangesAsync();
+            await _hubContext.Clients.All.SendAsync("NewQuotes", "");
         }
     }
 }

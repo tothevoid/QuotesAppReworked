@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {CanvasJSChart} from 'canvasjs-react-charts'
-
+import { HubConnectionBuilder } from '@microsoft/signalr';
 
 
 export class Chart extends Component {
@@ -26,7 +26,22 @@ export class Chart extends Component {
         ]
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
+        const hubConnection = new HubConnectionBuilder()
+            .withUrl('https://localhost:44384/hubs/quotes')
+            .withAutomaticReconnect()
+            .build();
+
+        hubConnection.on("NewQuotes", data => {
+            this.getCompanies(this.state.currentCompany, this.state.currentButton)
+        });
+
+        this.setState({ hubConnection }, () => {
+            this.state.hubConnection.start()
+                .then(()=>console.log("connected"))
+                .catch(()=>console.log("not connected"));
+        });
+
         this.getCompanies();
     }
 
@@ -82,7 +97,7 @@ export class Chart extends Component {
                     </thead>
                     <tbody>
                         {companies.map((company, ix) => {
-                            const decorationClass = currentCompany === company ?
+                            const decorationClass = currentCompany.companyTicker === company.companyTicker?
                                 "company-selected company-item": "company-item"
                             return <tr onClick={()=>this.onCompanySelected(company)} className={decorationClass} key={ix}>
                                 <td>
@@ -149,7 +164,6 @@ export class Chart extends Component {
     }
 
     async getQuotes(company, span) {
-        debugger;
         const response = await fetch('api/chart', {
             method: "post",
             headers: {"Content-Type": "application/json"},

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Quartz;
@@ -17,11 +18,12 @@ namespace QuotesExchangeApp.Jobs
         private readonly string moexSourceName = "MOEX";
         public List<Company> Companies { get; set; }
         private readonly ApplicationDbContext _context;
-                private readonly IConfiguration Configuration;
-        public MoexGrabberJob(ApplicationDbContext db, IConfiguration configuration)
+        private readonly IHubContext<QuotesHub> _hubContext;
+
+        public MoexGrabberJob(ApplicationDbContext db, IHubContext<QuotesHub> hubContext)
         {
             _context = db;
-            Configuration = configuration;
+            _hubContext = hubContext;
         }
 
         private float GetCurrencyMultiplier()
@@ -61,6 +63,7 @@ namespace QuotesExchangeApp.Jobs
                 await Task.Delay(500); //Задержка между запросами
             }
             await _context.SaveChangesAsync();
+            await _hubContext.Clients.All.SendAsync("NewQuotes", "");
         }
     }
 }
