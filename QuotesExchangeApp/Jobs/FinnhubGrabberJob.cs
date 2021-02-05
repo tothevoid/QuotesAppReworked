@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Quartz;
-using QuotesExchangeApp.Data;
 using QuotesExchangeApp.Data.Migrations;
 using QuotesExchangeApp.Models;
 using System;
