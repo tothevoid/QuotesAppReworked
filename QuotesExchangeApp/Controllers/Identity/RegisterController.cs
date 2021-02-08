@@ -11,20 +11,23 @@ using System.Threading.Tasks;
 
 namespace QuotesExchangeApp.Controllers.Identity
 {
+    [Route("api/identity/[controller]")]
     [AllowAnonymous]
+    [ApiController]
     public class RegisterController
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        //private readonly IEmailSender _emailSender;
 
         public RegisterController(
           UserManager<ApplicationUser> userManager,
           SignInManager<ApplicationUser> signInManager,
           IEmailSender emailSender)
         {
+            _signInManager = signInManager;
             _userManager = userManager;
-            _emailSender = emailSender;
+            //_emailSender = emailSender;
         }
 
 
@@ -32,8 +35,8 @@ namespace QuotesExchangeApp.Controllers.Identity
         [HttpPost]
         public async Task OnPostAsync(SignInModel model)
         {
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PasswordHash = model.Password };
+            var result = await _userManager.CreateAsync(user);
             if (result.Succeeded)
             {
                 //token generation

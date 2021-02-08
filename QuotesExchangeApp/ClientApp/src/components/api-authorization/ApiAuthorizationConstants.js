@@ -28,7 +28,7 @@ export const ApplicationPaths = {
   Login: `login`,
   LoginFailed: `${prefix}/${LoginActions.LoginFailed}`,
   LoginCallback: `${prefix}/${LoginActions.LoginCallback}`,
-  Register: `${prefix}/${LoginActions.Register}`,
+  Register: `register`,
   Profile: `${prefix}/${LoginActions.Profile}`,
   LogOut: `${prefix}/${LogoutActions.Logout}`,
   LoggedOut: `${prefix}/${LogoutActions.LoggedOut}`,

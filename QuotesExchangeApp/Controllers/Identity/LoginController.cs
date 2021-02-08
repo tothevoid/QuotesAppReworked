@@ -22,7 +22,7 @@ namespace QuotesExchangeApp.Controllers.Identity
         [HttpPost]
         public async Task<bool> OnPostAsync(SignInModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, lockoutOnFailure: false);
             return result.Succeeded;
         }
     }
