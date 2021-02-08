@@ -23,7 +23,7 @@ export class Login extends Component {
                     </div>
                     <div className="form-group">
                         <label>Пароль</label>
-                        <input name="password" value={this.state.password} onChange={this.handleChange}  className="form-control" />
+                        <input name="password" type="password"  value={this.state.password} onChange={this.handleChange}  className="form-control" />
                     </div>
                     <div className="form-group">
                         <button type="submit" onClick={(event)=>{event.preventDefault(); this.login()}} className="btn btn-primary login-btn">Войти</button>
@@ -36,8 +36,7 @@ export class Login extends Component {
     
     async login() {
         const {email, password} = this.state;
-        debugger;
-        const response = await fetch('api/identity/login', {
+        const response = await fetch('api/identity/signin', {
             method: "post",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({email: email, password: password})

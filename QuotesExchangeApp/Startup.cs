@@ -96,7 +96,7 @@ namespace QuotesExchangeApp
                 endpoints.MapHub<QuotesHub>("/hubs/quotes");
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action}/{id?}");
                 endpoints.MapRazorPages();
             });
 

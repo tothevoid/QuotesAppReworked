@@ -12,8 +12,8 @@ export class Registration extends Component {
     }
 
     render () {
-       return <div class="row login-container">
-            <div class="col-4 shadow-lg">
+       return <div className="row login-container">
+            <div className="col-4 shadow-lg">
                 <form>
                     <h5>Создайте новый аккаунт</h5>
                     <hr />
@@ -23,7 +23,7 @@ export class Registration extends Component {
                     </div>
                     <div className="form-group">
                         <label>Password</label>
-                        <input name="password" value={this.state.password} onChange={this.handleChange}  className="form-control" />
+                        <input name="password" type="password"  value={this.state.password} onChange={this.handleChange}  className="form-control" />
                     </div>
                     <div className="form-group">
                         <button type="submit" onClick={(event)=>{event.preventDefault(); this.singIn()}} className="btn btn-primary login-btn">Войти</button>
@@ -35,8 +35,7 @@ export class Registration extends Component {
     
     async singIn() {
         const {email, password} = this.state;
-        debugger;
-        const response = await fetch('api/identity/register', {
+        const response = await fetch('api/identity/signup', {
             method: "post",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({email: email, password: password})
