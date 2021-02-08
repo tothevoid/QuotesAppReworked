@@ -261,3 +261,8 @@ h5 {
     border: solid;
     border-width: 1px;
 }
+
+.login-container{
+    display: flex;
+    justify-content: center;
+}
