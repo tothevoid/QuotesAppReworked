@@ -24,6 +24,7 @@ export default class AuthorizeRoute extends Component {
     }
 
     render() {
+        debugger;
         const { ready, authenticated } = this.state;
         var link = document.createElement("a");
         link.href = this.props.path;

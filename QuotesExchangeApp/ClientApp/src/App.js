@@ -26,7 +26,7 @@ export default class App extends Component {
         <Route path='/chart' component={Chart} />
         <Route path='/login' component={Login} />
         <Route path='/register' component={Registration} />
-        <AuthorizeRoute path='/companies' component={Companies} />
+        <Route path='/companies' component={Companies} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>
     );
