@@ -33,18 +33,10 @@ export class Authorization extends Component {
                 </form>
             </div>
         </div>
-    
     }
     
     async login() {
-        const {email, password, returnUrl} = this.state;
-        const response = await fetch('api/identity/signin', {
-            method: "post",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({email: email, password: password})
-        });;
-        const data = await response.json();
-        await authService.signIn(data);
+        await authService.signIn(this.state.email, this.state.password);
         const url = this.getReturnUrl(this.state);
         this.navigateToReturnUrl(url);
     }

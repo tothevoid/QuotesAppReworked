@@ -60,11 +60,9 @@ export class Quotes extends Component {
     }
 
     async getQuotes() {
-        const token = await authService.getAccessToken();
-        // {
-        //     headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
-        // }
-        const response = await fetch('api/quotes');
+        const response = await fetch('api/quotes', {
+            headers: await authService.getAuthHeaders()
+        });
         const data = await response.json();
             this.setState({ quotes: data, loading: false });
         }

@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using QuotesExchangeApp.Models;
+using QuotesExchangeApp.Models.Frontend;
 using QuotesExchangeApp.Models.Identity;
+using QuotesExchangeApp.Options;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace QuotesExchangeApp.Controllers.Identity
@@ -16,21 +23,15 @@ namespace QuotesExchangeApp.Controllers.Identity
     public class IdentityController
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManage;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly JwtOptions _jwtOptions;
 
         public IdentityController(SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager, IOptions<JwtOptions> jwtOptions)
         {
             _signInManager = signInManager;
-            _userManage = userManager;
-        }
-
-        [HttpPost]
-        public async Task<User> SignIn(SignInModel model)
-        {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, lockoutOnFailure: false);
-            var user = new User { Name = model.Email, Token = "" };
-            return user;
+            _userManager = userManager;
+            _jwtOptions = jwtOptions.Value;
         }
 
         [HttpGet]
@@ -41,7 +42,7 @@ namespace QuotesExchangeApp.Controllers.Identity
         public async Task<User> SignUp(SignInModel model)
         {
             var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PasswordHash = model.Password };
-            var result = await _userManage.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user);
             if (result.Succeeded)
             {
                 //token generation
@@ -53,12 +54,49 @@ namespace QuotesExchangeApp.Controllers.Identity
 
             return null;
         }
+ 
+        [HttpPost]
+        public async Task<UserIdentity> GetToken(SignInModel model)
+        {
+            //var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, lockoutOnFailure: false);
+            var identity = await GetIdentity(model.Email, model.Password);
 
-        private async Task<bool> SendConfirmationEmailAsync() => throw new NotImplementedException();
-        //_userManager.Options.SignIn.RequireConfirmedAccount
-        //TODO: email integration
-        //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-        //       $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            if (identity != null)
+            {
+                var now = DateTime.UtcNow;
+                var jwt = new JwtSecurityToken(
+                        issuer: _jwtOptions.Issuer,
+                        audience: _jwtOptions.Audience,
+                        notBefore: now,
+                        claims: identity.Claims,
+                        expires: now.Add(TimeSpan.FromMinutes(_jwtOptions.Lifetime)),
+                        signingCredentials: new SigningCredentials(
+                            new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtOptions.Key)),
+                                SecurityAlgorithms.HmacSha256));
+                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+                return new UserIdentity { Token = encodedJwt };
+            }
+
+            //fix
+            return null;
+        }
+
+        private async Task<ClaimsIdentity> GetIdentity(string username, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(username);
+            if (user != null)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, username),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, "admin")
+                };
+                ClaimsIdentity claimsIdentity =
+                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
+                    ClaimsIdentity.DefaultRoleClaimType);
+                return claimsIdentity;
+            }
+            return null;
+        }
     }
 }

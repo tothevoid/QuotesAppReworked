@@ -13,11 +13,16 @@ using QuotesExchangeApp.Data.Migrations;
 using QuotesExchangeApp.Jobs;
 using QuotesExchangeApp.Models;
 using QuotesExchangeApp.Quartz;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using QuotesExchangeApp.Options;
+using Microsoft.Extensions.Options;
 
 namespace QuotesExchangeApp
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -28,6 +33,7 @@ namespace QuotesExchangeApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
+            services.ConfigureJwt(Configuration);
 
             services.AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlite(
@@ -61,7 +67,10 @@ namespace QuotesExchangeApp
             services.AddTransient<ISchedulerFactory, StdSchedulerFactory>();
 
             services.AddControllersWithViews();
+
             services.AddRazorPages();
+
+            services.Configure<JwtOptions>(options => Configuration.GetSection("jwt").Bind(options));
 
             services.AddSpaStaticFiles(configuration =>
             {

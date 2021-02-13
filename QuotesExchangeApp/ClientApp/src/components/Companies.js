@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import authService from './api-authorization/AuthorizeService'
+import authService  from './api-authorization/AuthorizeService'
 
 export class Companies extends Component {
  
@@ -9,7 +9,7 @@ export class Companies extends Component {
   }
 
   componentDidMount() {
-    this.populateWeatherData();
+    this.getCompanies();
   }
 
     static renderedCompaniesTable(companies) {
@@ -45,10 +45,9 @@ export class Companies extends Component {
     );
   }
 
-  async populateWeatherData() {
-    const token = await authService.getAccessToken();
+  async getCompanies() {
     const response = await fetch('api/company', {
-      headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
+      headers: await authService.getAuthHeaders()
     });
     const data = await response.json();
       this.setState({ companies: data, loading: false });

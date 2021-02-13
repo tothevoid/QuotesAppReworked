@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {CanvasJSChart} from 'canvasjs-react-charts'
 import { HubConnectionBuilder } from '@microsoft/signalr';
-
+import authService from './api-authorization/AuthorizeService'
 
 export class Chart extends Component {
     static displayName = Chart.name;
@@ -153,7 +153,9 @@ export class Chart extends Component {
     }
     
     async getCompanies() {
-        const response = await fetch('api/quotes');
+        const response = await fetch('api/quotes', {
+            headers: await authService.getAuthHeaders()
+        });
         const data = await response.json();
         const currentCompany = this.state.currentCompany || data[0];
         if (data && data.length !== 0){
@@ -163,9 +165,10 @@ export class Chart extends Component {
     }
 
     async getQuotes(company, span) {
+        const headers = {"Content-Type": "application/json", ...await authService.getAuthHeaders()}
         const response = await fetch('api/chart', {
-            method: "post",
-            headers: {"Content-Type": "application/json"},
+            method: "POST",
+            headers: headers,
             body: JSON.stringify({companyId: company.id, mins: span.value})
         });
         const data = await response.json();

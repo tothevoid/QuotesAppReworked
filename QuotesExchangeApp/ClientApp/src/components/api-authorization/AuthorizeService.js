@@ -3,36 +3,51 @@ import { ApplicationPaths, ApplicationName } from './ApiAuthorizationConstants';
 export class AuthorizeService {
     _callbacks = [];
     _nextSubscriptionId = 0;
-    _user = null;
+    _token = null;
     _isAuthenticated = false;
 
     async isAuthenticated() {
-        const user = await this.getUser();
-        return !!user;
+        const token = await this.getIdentity();
+        return !!token;
     }
 
-    async getUser() {
-        return localStorage.getItem("user");
+    async getIdentity() {
+        return localStorage.getItem("token");
     }
 
     async getAccessToken() {
-        return this.getUser().token;
+        return this.getIdentity();
     }
 
-    async signIn(user) {
-        localStorage.setItem("user", user);
-        this.updateState(user);
+    async getUser() {
+        //parse jwt and get user
+        return "test";
+    } 
+
+    async signIn(email, password) {
+        const response = await fetch("api/identity/gettoken", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email: email, password: password})
+        }).then(response => response.json());
+        localStorage.setItem("token", response.token);
+        this.updateState(response.token);
     }
 
     async signOut() {
-        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         this.updateState(undefined);
         return true;
     }
 
-    updateState(user) {
-        this._user = user;
-        this._isAuthenticated = !!this._user;
+    async getAuthHeaders() {
+        const token = await authService.getAccessToken();
+        return !token ? {} : { 'Authorization': `Bearer ${token}` }
+    }
+
+    updateState(token) {
+        this._token = token;
+        this._isAuthenticated = !!this._token;
         this.notifySubscribers();
     }
 
@@ -58,7 +73,6 @@ export class AuthorizeService {
             callback();
         }
     }
-
     static get instance() { return authService }
 }
 

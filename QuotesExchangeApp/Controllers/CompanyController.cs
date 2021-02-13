@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace QuotesExchangeApp.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CompanyController : ControllerBase

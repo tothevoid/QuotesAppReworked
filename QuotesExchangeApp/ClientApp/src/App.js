@@ -22,10 +22,10 @@ export default class App extends Component {
       <Layout>
         <Route exact path='/' component={Home} />
         <AuthorizeRoute path='/quotes' component={Quotes} />
-        <Route path='/chart' component={Chart} />
+        <AuthorizeRoute path='/chart' component={Chart} />
+        <AuthorizeRoute path='/companies' component={Companies} />
         <Route path='/authorization' component={Authorization} />
         <Route path='/register' component={Registration} />
-        <Route path='/companies' component={Companies} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>
     );
