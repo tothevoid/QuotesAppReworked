@@ -266,3 +266,12 @@ h5 {
     display: flex;
     justify-content: center;
 }
+
+.nav-custom{
+    background-color: #f0b90b;
+    border-radius: 0 0 10px 10px;
+}
+
+.nav-custom a{
+    color: #fff !important;
+}

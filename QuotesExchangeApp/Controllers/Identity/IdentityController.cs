@@ -26,10 +26,11 @@ namespace QuotesExchangeApp.Controllers.Identity
         }
 
         [HttpPost]
-        public async Task<bool> SignIn(SignInModel model)
+        public async Task<User> SignIn(SignInModel model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, lockoutOnFailure: false);
-            return result.Succeeded;
+            var user = new User { Name = model.Email, Token = "" };
+            return user;
         }
 
         [HttpGet]
@@ -37,7 +38,7 @@ namespace QuotesExchangeApp.Controllers.Identity
 
         //TODO: return generated auth token
         [HttpPost]
-        public async Task SignUp(SignInModel model)
+        public async Task<User> SignUp(SignInModel model)
         {
             var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PasswordHash = model.Password };
             var result = await _userManage.CreateAsync(user);
@@ -47,7 +48,10 @@ namespace QuotesExchangeApp.Controllers.Identity
                 //var code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 //new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl };
                 await _signInManager.SignInAsync(user, isPersistent: false);
+                return new User() { Name = model.Email }; 
             }
+
+            return null;
         }
 
         private async Task<bool> SendConfirmationEmailAsync() => throw new NotImplementedException();

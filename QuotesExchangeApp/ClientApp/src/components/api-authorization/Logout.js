@@ -4,9 +4,6 @@ import authService from './AuthorizeService';
 import { AuthenticationResultStatus } from './AuthorizeService';
 import { QueryParameterNames, LogoutActions, ApplicationPaths } from './ApiAuthorizationConstants';
 
-// The main responsibility of this component is to handle the user's logout process.
-// This is the starting point for the logout process, which is usually initiated when a
-// user clicks on the logout button on the LoginMenu component.
 export class Logout extends Component {
     constructor(props) {
         super(props);
@@ -69,18 +66,12 @@ export class Logout extends Component {
         const isauthenticated = await authService.isAuthenticated();
         if (isauthenticated) {
             const result = await authService.signOut(state);
-            switch (result.status) {
-                case AuthenticationResultStatus.Redirect:
-                    break;
-                case AuthenticationResultStatus.Success:
-                    await this.navigateToReturnUrl(returnUrl);
-                    break;
-                case AuthenticationResultStatus.Fail:
-                    this.setState({ message: result.message });
-                    break;
-                default:
-                    throw new Error("Invalid authentication result status.");
+            if (result){
+                this.navigateToReturnUrl(returnUrl);
+            } else {
+                this.setState({ message: result.message });
             }
+           
         } else {
             this.setState({ message: "You successfully logged out!" });
         }
@@ -95,7 +86,7 @@ export class Logout extends Component {
                 // is when we are doing a redirect sign in flow.
                 throw new Error('Should not redirect.');
             case AuthenticationResultStatus.Success:
-                await this.navigateToReturnUrl(this.getReturnUrl(result.state));
+                this.navigateToReturnUrl(this.getReturnUrl(result.state));
                 break;
             case AuthenticationResultStatus.Fail:
                 this.setState({ message: result.message });

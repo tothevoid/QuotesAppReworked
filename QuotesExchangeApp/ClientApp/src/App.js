@@ -9,10 +9,9 @@ import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 import { Registration } from './components/Identity/Registration';
-import { Login } from './components/Identity/Login';
+import { Authorization } from './components/Identity/Authorization';
 
 import './custom.css'
-
 
 
 export default class App extends Component {
@@ -22,9 +21,9 @@ export default class App extends Component {
     return (
       <Layout>
         <Route exact path='/' component={Home} />
-        <Route path='/quotes' component={Quotes} />
+        <AuthorizeRoute path='/quotes' component={Quotes} />
         <Route path='/chart' component={Chart} />
-        <Route path='/login' component={Login} />
+        <Route path='/authorization' component={Authorization} />
         <Route path='/register' component={Registration} />
         <Route path='/companies' component={Companies} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
