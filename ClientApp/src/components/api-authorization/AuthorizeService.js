@@ -25,13 +25,21 @@ export class AuthorizeService {
     } 
 
     async signIn(email, password) {
-        const response = await fetch("api/identity/gettoken", {
+        await this.requestToken(email, password, "gettoken");
+    }
+
+    async signUp(email, password) {
+        await this.requestToken(email, password, "signup");
+    }
+
+    async requestToken(email, password, methodName){
+        const response = await fetch("api/identity/" + methodName, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({email: email, password: password})
-        }).then(response => response.json());
-        localStorage.setItem("token", response.token);
-        this.updateState(response.token);
+        }).then(response => response.text());
+        localStorage.setItem("token", response);
+        this.updateState(response);
     }
 
     async signOut() {

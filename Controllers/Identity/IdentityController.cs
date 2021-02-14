@@ -37,29 +37,26 @@ namespace QuotesExchangeApp.Controllers.Identity
         [HttpGet]
         public async Task SignOut() => await _signInManager.SignOutAsync();
 
-        //TODO: return generated auth token
         [HttpPost]
-        public async Task<User> SignUp(SignInModel model)
+        public async Task<string> SignUp(SignInModel model)
         {
             var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PasswordHash = model.Password };
             var result = await _userManager.CreateAsync(user);
-            if (result.Succeeded)
-            {
-                //token generation
-                //var code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                //new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl };
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return new User() { Name = model.Email }; 
-            }
-
-            return null;
+            return (result.Succeeded) ?
+                GenerateToken(user):
+                string.Empty;
         }
- 
+
         [HttpPost]
-        public async Task<UserIdentity> GetToken(SignInModel model)
+        public async Task<string> GetToken(SignInModel model)
         {
-            //var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, lockoutOnFailure: false);
-            var identity = await GetIdentity(model.Email, model.Password);
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            return GenerateToken(user);
+        }
+
+        private string GenerateToken(ApplicationUser user)
+        {
+            var identity = GetIdentity(user);
 
             if (identity != null)
             {
@@ -74,21 +71,19 @@ namespace QuotesExchangeApp.Controllers.Identity
                             new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtOptions.Key)),
                                 SecurityAlgorithms.HmacSha256));
                 var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-                return new UserIdentity { Token = encodedJwt };
+                return encodedJwt;
             }
 
-            //fix
-            return null;
+            return string.Empty;
         }
 
-        private async Task<ClaimsIdentity> GetIdentity(string username, string password)
+        private ClaimsIdentity GetIdentity(ApplicationUser user)
         {
-            var user = await _userManager.FindByEmailAsync(username);
             if (user != null)
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, username),
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, "admin")
                 };
                 ClaimsIdentity claimsIdentity =
