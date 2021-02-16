@@ -12,7 +12,7 @@ export class Companies extends Component {
     this.getCompanies();
   }
 
-    static renderedCompaniesTable(companies) {
+  renderedCompaniesTable(companies) {
       return (
           <div className="div-custom">
               <table className="table custom-table table-company">
@@ -35,7 +35,10 @@ export class Companies extends Component {
   render() {
     let contents = this.state.loading
       ? <p><em>Loading...</em></p>
-        : Companies.renderedCompaniesTable(this.state.companies);
+        : <div>
+          {this.renderNewCompanyForm()}
+          {this.renderedCompaniesTable(this.state.companies)}
+        </div>
 
     return (
       <div>
@@ -43,6 +46,25 @@ export class Companies extends Component {
         {contents}
       </div>
     );
+  }
+
+  renderNewCompanyForm() {
+    return <div className="new-company-form">
+      <h2>New company</h2>
+      <label>Ticker</label>
+      <input name="companyTicker" onChange={this.handleChange} type="text"></input>
+      <label>Alias</label>
+      <input name="companyName" onChange={this.handleChange} type="text"></input>
+      <button onClick={()=>{this.onCompanyAddClick()}}>Add</button>
+    </div>
+  }
+
+  onCompanyAddClick(){
+
+  }
+
+  handleChange = ({ target: { name, value } }) => {
+    this.setState({ [name]: value})
   }
 
   async getCompanies() {

@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using QuotesExchangeApp.Options;
 using Microsoft.Extensions.Options;
+using QuotesExchangeApp.Services.Interfaces.Grabbing;
+using QuotesExchangeApp.Services.Grabbing;
 
 namespace QuotesExchangeApp
 {
@@ -71,6 +73,9 @@ namespace QuotesExchangeApp
             services.AddRazorPages();
 
             services.Configure<JwtOptions>(options => Configuration.GetSection("jwt").Bind(options));
+            services.Configure<FinhubOptions>(options => Configuration.GetSection("finhub").Bind(options));
+
+            services.AddTransient<IFinhubGrabberService, FinhubGrabberService>();
 
             services.AddSpaStaticFiles(configuration =>
             {
