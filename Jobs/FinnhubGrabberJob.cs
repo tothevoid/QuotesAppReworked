@@ -5,21 +5,20 @@ using System.Threading.Tasks;
 
 namespace QuotesExchangeApp.Jobs
 {
-    public class FinnhubGrabberJob : IJob
+    public class FinnhubGrabberJob : BaseGrabberJob, IJob
     {
-        private readonly IHubContext<QuotesHub> _hubContext;
+
         private readonly IFinhubGrabberService _grabberService;
 
-        public FinnhubGrabberJob(IHubContext<QuotesHub> hubContext, IFinhubGrabberService grabberService)
+        public FinnhubGrabberJob(IFinhubGrabberService grabberService, IHubContext<QuotesHub> context) : base(context)
         {
-            _hubContext = hubContext;
             _grabberService = grabberService;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
             await _grabberService.GrabAllAsync();
-            await _hubContext.Clients.All.SendAsync("NewQuotes", "");
+            await NotifyClient();
         }
     }
 }

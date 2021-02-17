@@ -19,6 +19,7 @@ namespace QuotesExchangeApp.Services.Grabbing
         private readonly string _finnhubSourceName = "Finnhub";
         private readonly ApplicationDbContext _context;
         private readonly FinhubOptions _options;
+        private int _grabMsInterval = 500;
 
         public FinhubGrabberService(ApplicationDbContext context, IOptions<FinhubOptions> options)
         {
@@ -47,14 +48,14 @@ namespace QuotesExchangeApp.Services.Grabbing
                     _context.SupportedCompanies.Add(new SupportedCompany { Company = company, Source = _finhubSource });
                 }
                 _context.Quotes.Add(quote);
-                await Task.Delay(500);
+                await Task.Delay(_grabMsInterval);
             }
             await _context.SaveChangesAsync();
         }
 
         public Quote GrabCompanyQuote(Company company)
         {
-            string response = new WebClient().DownloadString(_finhubSource.ApiUrl + company.Ticker + _options.Url);
+            string response = new WebClient().DownloadString($"{_finhubSource.ApiUrl}{company.Ticker}&token={_options.Token}");
             string rawPrice = JObject.Parse(response).SelectToken("c").ToString();
             var price = float.Parse(rawPrice);
             if (price <= 0) return null;

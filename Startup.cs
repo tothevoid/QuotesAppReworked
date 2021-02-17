@@ -76,6 +76,7 @@ namespace QuotesExchangeApp
             services.Configure<FinhubOptions>(options => Configuration.GetSection("finhub").Bind(options));
 
             services.AddTransient<IFinhubGrabberService, FinhubGrabberService>();
+            services.AddTransient<IMoexGrabberService, MoexGrabberService>();
 
             services.AddSpaStaticFiles(configuration =>
             {
