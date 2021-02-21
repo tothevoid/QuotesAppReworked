@@ -5,7 +5,7 @@ export class Companies extends Component {
  
   constructor(props) {
     super(props);
-    this.state = { companies: [], loading: true };
+    this.state = { companies: [], quotes: [], loading: true };
   }
 
   componentDidMount() {
@@ -37,6 +37,7 @@ export class Companies extends Component {
       ? <p><em>Loading...</em></p>
         : <div>
           {this.renderNewCompanyForm()}
+          {this.renderSources(this.state.quotes)}
           {this.renderedCompaniesTable(this.state.companies)}
         </div>
 
@@ -48,19 +49,60 @@ export class Companies extends Component {
     );
   }
 
+  renderSources(quotes){
+    if (!quotes || quotes.length === 0) return <div></div>;
+    return <div className="suggested-bar">
+          <p>Select suggested source</p>
+          <div className="suggested-sources-cotainer">
+          {
+            quotes.map((quote, ix)=>{
+                return <div key={ix} className="suggested-source"onClick={()=>this.onSourceSelected(quote)} >
+                    <p className="suggested-parameter">Source: {quote.source.name}</p>
+                    <p className="suggested-parameter">Acutal price: {quote.price}$</p>
+                </div>
+            })
+          }
+          </div>
+      </div>
+  }asd
+
+  async onSourceSelected(source){
+    const addedCompany = await fetch("api/company", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", ...await authService.getAuthHeaders()},
+      body: JSON.stringify(source)
+    }).then(response => response.json());
+
+    if (addedCompany){
+      this.setState({companies: [...this.state.companies, addedCompany],
+        quotes: [], companyName: "", companyTicker: ""})
+    }
+  }
+
   renderNewCompanyForm() {
     return <div className="new-company-form">
       <h2>New company</h2>
       <label>Ticker</label>
-      <input name="companyTicker" onChange={this.handleChange} type="text"></input>
+      <input className="new-company-input" name="companyTicker" onChange={this.handleChange} type="text"></input>
       <label>Alias</label>
-      <input name="companyName" onChange={this.handleChange} type="text"></input>
+      <input className="new-company-input" name="companyName" onChange={this.handleChange} type="text"></input>
       <button onClick={()=>{this.onCompanyAddClick()}}>Add</button>
     </div>
   }
 
-  onCompanyAddClick(){
-
+  async onCompanyAddClick(){
+    const {companyName, companyTicker} = this.state;
+    debugger;
+    if (companyName !== "" && companyTicker !== "")
+    {
+      const response = await fetch("api/quotes/getbycompany", {
+        method: "POST",
+        headers: {"Content-Type": "application/json", ...await authService.getAuthHeaders()},
+        body: JSON.stringify({name: companyName, ticker: companyTicker})
+      }).then(response => response.json());
+  
+      this.setState({quotes: response.filter((element)=> element)});
+    }
   }
 
   handleChange = ({ target: { name, value } }) => {
@@ -74,4 +116,6 @@ export class Companies extends Component {
     const data = await response.json();
       this.setState({ companies: data, loading: false });
   }
+
+
 }

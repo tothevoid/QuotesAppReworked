@@ -60,7 +60,7 @@ export class Quotes extends Component {
     }
 
     async getQuotes() {
-        const response = await fetch('api/quotes', {
+        const response = await fetch('api/quotes/get', {
             headers: await authService.getAuthHeaders()
         });
         const data = await response.json();

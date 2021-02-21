@@ -10,6 +10,6 @@ namespace QuotesExchangeApp.Services.Interfaces.Grabbing
     {
         Task GrabAllAsync();
 
-        Quote GrabCompanyQuote(Company company);
+        Task<Quote> GrabCompanyQuote(Company company);
     }
 }

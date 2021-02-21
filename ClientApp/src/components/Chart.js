@@ -153,7 +153,7 @@ export class Chart extends Component {
     }
     
     async getCompanies() {
-        const response = await fetch('api/quotes', {
+        const response = await fetch('api/quotes/get', {
             headers: await authService.getAuthHeaders()
         });
         const data = await response.json();

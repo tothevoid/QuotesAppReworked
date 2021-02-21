@@ -275,3 +275,35 @@ h5 {
 .nav-custom a{
     color: #fff !important;
 }
+
+.new-company-form{
+
+}
+
+.new-company-input{
+    width: 300px;
+    margin: 0 10px;
+}
+
+.suggested-sources-cotainer{
+    display: flex;
+    margin: 0 10px;
+}
+
+.suggested-source{
+    cursor: pointer;
+    background: #f0b90b;
+    color: black;
+    border-radius: 5px;
+    border: 2px black;
+    padding: 10px;
+}
+
+.suggested-parameter{
+  margin: 0;
+  padding: 0;
+}
+
+.suggested-bar{
+    margin: 10px 0;
+}

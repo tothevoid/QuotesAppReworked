@@ -6,7 +6,6 @@ using QuotesExchangeApp.Models;
 using QuotesExchangeApp.Options;
 using QuotesExchangeApp.Services.Interfaces.Grabbing;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -42,7 +41,7 @@ namespace QuotesExchangeApp.Services.Grabbing
 
             foreach (var company in finnhubCompanies)
             {
-                var quote = GrabCompanyQuote(company);
+                var quote = await GrabCompanyQuote(company);
                 if (isFirstLaunch)
                 {
                     _context.SupportedCompanies.Add(new SupportedCompany { Company = company, Source = _finhubSource });
@@ -53,9 +52,10 @@ namespace QuotesExchangeApp.Services.Grabbing
             await _context.SaveChangesAsync();
         }
 
-        public Quote GrabCompanyQuote(Company company)
+        public async Task<Quote> GrabCompanyQuote(Company company)
         {
-            string response = new WebClient().DownloadString($"{_finhubSource.ApiUrl}{company.Ticker}&token={_options.Token}");
+            string url = $"{_finhubSource.ApiUrl}{company.Ticker}&token={_options.Token}";
+            string response = await new WebClient().DownloadStringTaskAsync(url);
             string rawPrice = JObject.Parse(response).SelectToken("c").ToString();
             var price = float.Parse(rawPrice);
             if (price <= 0) return null;

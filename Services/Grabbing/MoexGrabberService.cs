@@ -27,7 +27,7 @@ namespace QuotesExchangeApp.Services.Grabbing
 
         public async Task GrabAllAsync()
         {
-            float multiplier = GetCurrencyMultiplier();
+            float multiplier = await GetCurrencyMultiplier();
          
             var moexCompanies = _context.SupportedCompanies
                 .Include(x => x.Company).Where(x => x.Source.Name == moexSourceName)
@@ -43,7 +43,7 @@ namespace QuotesExchangeApp.Services.Grabbing
 
             foreach (var company in moexCompanies)
             {
-                var quote = GrabCompanyQuote(company, multiplier);
+                var quote = await GrabCompanyQuote(company, multiplier);
 
                 if (isFirstLaunch)
                 {
@@ -55,9 +55,11 @@ namespace QuotesExchangeApp.Services.Grabbing
             await _context.SaveChangesAsync();
         }
 
-        private float GetCurrencyMultiplier()
+        private async Task<float> GetCurrencyMultiplier()
         {
-            var usdRateJson = new WebClient().DownloadString("https://www.cbr-xml-daily.ru/latest.js"); //Текущий курс рубля в разных валютах
+            //Текущий курс рубля в разных валютах
+            var usdRateJson = await new WebClient()
+                   .DownloadStringTaskAsync("https://www.cbr-xml-daily.ru/latest.js");
 
             dynamic usd = JObject.Parse(usdRateJson);
             string usdRate = usd.rates.USD;
@@ -66,11 +68,12 @@ namespace QuotesExchangeApp.Services.Grabbing
             return multiplier;
         }
 
-        public Quote GrabCompanyQuote(Company company, double multiplier = 1)
+        public async Task<Quote> GrabCompanyQuote(Company company, double multiplier = 1)
         {
             Quote result = null;
-            var response = new WebClient().DownloadString(_moexSource.ApiUrl + company.Ticker + ".json");
+            string url = _moexSource.ApiUrl + company.Ticker + ".json";
 
+            var response = await new WebClient().DownloadStringTaskAsync(url);
             dynamic moex = JObject.Parse(response);
             if (moex.marketdata.data.Count == 0) return result;
             string moexstring = moex.marketdata.data[2][12];

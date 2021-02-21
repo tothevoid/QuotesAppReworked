@@ -24,8 +24,8 @@ const prefix = '/authentication';
 export const ApplicationPaths = {
   DefaultLoginRedirectPath: '/',
   ApiAuthorizationPrefix: prefix,
-  Login: `authorization`,
-  Register: `register`,
+  Login: `/authorization`,
+  Register: `/register`,
   Profile: `${prefix}/${LoginActions.Profile}`,
   LogOut: `${prefix}/${LogoutActions.Logout}`,
   LoggedOut: `${prefix}/${LogoutActions.LoggedOut}`,
