@@ -12,13 +12,10 @@ using Quartz.Spi;
 using QuotesExchangeApp.Data.Migrations;
 using QuotesExchangeApp.Jobs;
 using QuotesExchangeApp.Models;
-using QuotesExchangeApp.Quartz;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using QuotesExchangeApp.Options;
-using Microsoft.Extensions.Options;
-using QuotesExchangeApp.Services.Interfaces.Grabbing;
+using QuotesExchangeApp.Quartz;
 using QuotesExchangeApp.Services.Grabbing;
+using QuotesExchangeApp.Services.Interfaces.Grabbing;
 
 namespace QuotesExchangeApp
 {

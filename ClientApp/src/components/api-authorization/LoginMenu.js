@@ -24,10 +24,10 @@ export class LoginMenu extends Component {
     }
 
     async populateState() {
-        const [isAuthenticated, user] = await Promise.all([authService.isAuthenticated(), authService.getUser()])
+        const [isAuthenticated, userName] = await Promise.all([authService.isAuthenticated(), authService.getUser()])
         this.setState({
             isAuthenticated,
-            userName: user && user.name
+            userName
         });
     }
 

@@ -12,16 +12,31 @@ export class AuthorizeService {
     }
 
     async getIdentity() {
-        return localStorage.getItem("token");
+        const token = localStorage.getItem("token");
+        if (token){
+            const jwt = this.parseJwt(token);
+            if (jwt.exp && jwt.exp * 1000 <= Date.now()){
+                localStorage.setItem("token", "");
+                return "";
+            }
+            return token;
+        }
+        return "";
     }
+
 
     async getAccessToken() {
         return this.getIdentity();
     }
 
     async getUser() {
-        //parse jwt and get user
-        return "test";
+        const token = localStorage.getItem("token");
+        if (token){
+            const userNameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+            const jwt = await this.parseJwt(token);
+            return (jwt && jwt[userNameClaim]) ? jwt[userNameClaim] : "";
+        }
+        return "";
     } 
 
     async signIn(email, password) {
@@ -41,6 +56,16 @@ export class AuthorizeService {
         localStorage.setItem("token", response);
         this.updateState(response);
     }
+
+    parseJwt (token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    
+        return JSON.parse(jsonPayload);
+    };
 
     async signOut() {
         localStorage.removeItem("token");
