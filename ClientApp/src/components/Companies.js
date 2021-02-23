@@ -5,7 +5,7 @@ export class Companies extends Component {
  
   constructor(props) {
     super(props);
-    this.state = { companies: [], quotes: [], loading: true };
+    this.state = { companies: [], quotes: [], loading: true, errorMessage: "", isSourcesLoading: false };
   }
 
   componentDidMount() {
@@ -32,12 +32,21 @@ export class Companies extends Component {
       );
   }
 
+  renderErrorMessage(message){
+    return <div className="error-message">
+      {message}
+      </div>
+  }
+
   render() {
     let contents = this.state.loading
       ? <p><em>Loading...</em></p>
         : <div>
           {this.renderNewCompanyForm()}
-          {this.renderSources(this.state.quotes)}
+          {this.renderErrorMessage(this.state.errorMessage)}
+          {(this.state.isSourcesLoading) ? 
+            <div>Loading sources...</div>:
+            this.renderSources(this.state.quotes)}
           {this.renderedCompaniesTable(this.state.companies)}
         </div>
 
@@ -64,7 +73,7 @@ export class Companies extends Component {
           }
           </div>
       </div>
-  }asd
+  }
 
   async onSourceSelected(source){
     const addedCompany = await fetch("api/company", {
@@ -80,28 +89,44 @@ export class Companies extends Component {
   }
 
   renderNewCompanyForm() {
+    const {isSourcesLoading} = this.state;
     return <div className="new-company-form">
       <h2>New company</h2>
+      <label>Name</label>
+      <input className="new-company-input" name="companyName" onChange={this.handleChange} type="text"></input>
       <label>Ticker</label>
       <input className="new-company-input" name="companyTicker" onChange={this.handleChange} type="text"></input>
-      <label>Alias</label>
-      <input className="new-company-input" name="companyName" onChange={this.handleChange} type="text"></input>
-      <button onClick={()=>{this.onCompanyAddClick()}}>Add</button>
+      <button className="add-company-btn" disabled={isSourcesLoading} onClick={()=>{this.onCompanyAddClick()}}>Add</button>
     </div>
   }
 
   async onCompanyAddClick(){
     const {companyName, companyTicker} = this.state;
-    debugger;
-    if (companyName !== "" && companyTicker !== "")
+    const isCompanyNameEmpty = !companyName || companyName.trim() === "";
+    const isCompanyTickerEmpty = !companyTicker || companyTicker.trim() === "";
+    if (!isCompanyNameEmpty && !isCompanyTickerEmpty)
     {
+      this.setState({isSourcesLoading: true});
       const response = await fetch("api/quotes/getbycompany", {
         method: "POST",
         headers: {"Content-Type": "application/json", ...await authService.getAuthHeaders()},
         body: JSON.stringify({name: companyName, ticker: companyTicker})
-      }).then(response => response.json());
-  
-      this.setState({quotes: response.filter((element)=> element)});
+      }).then(response => {
+        this.setState({isSourcesLoading: false});
+        return response.json()
+      });
+      if (response && response.isSuccessful){
+        this.setState({quotes: response.quotes.filter((element)=> element)});
+      } else if (response && response.errorMessage) {
+        this.setState({errorMessage: response.errorMessage});
+      } else {
+        this.setState({errorMessage: "unexpected server error"});
+      }
+    } else {
+      const errorMessage = "Please fill:" + 
+        ((isCompanyNameEmpty) ? "\n Company name" : "") + 
+        ((isCompanyTickerEmpty) ? "\n Company ticker": "");
+      this.setState({errorMessage});
     }
   }
 
@@ -110,12 +135,10 @@ export class Companies extends Component {
   }
 
   async getCompanies() {
-    const response = await fetch('api/company', {
+    const response = await fetch("api/company", {
       headers: await authService.getAuthHeaders()
     });
     const data = await response.json();
-      this.setState({ companies: data, loading: false });
+    this.setState({ companies: data, loading: false });
   }
-
-
 }

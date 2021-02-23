@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using QuotesExchangeApp.Data.Migrations;
 using QuotesExchangeApp.Models;
 using QuotesExchangeApp.Models.Frontend;
+using QuotesExchangeApp.Models.Frontend.Output;
 using QuotesExchangeApp.Services.Interfaces.Grabbing;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,9 +50,27 @@ namespace QuotesExchangeApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IEnumerable<Quote>> GetByCompany(Company company) =>
-            await Task.WhenAll(_moexGrabberService.GrabCompanyQuote(company),
-                _finhubGrabberService.GrabCompanyQuote(company));
+        public async Task<GetByCompanyResponse> GetByCompany(Company company)
+        {
+            var existingCompany = _context.Companies.FirstOrDefault(cmp => 
+                    cmp.Name.ToLower().Trim() == company.Name.ToLower().Trim() ||
+                    cmp.Ticker.ToLower().Trim() == company.Ticker.ToLower().Trim());
 
+            if (existingCompany != null)
+            {
+                string exceptionMessage = (company.Name == existingCompany.Name) ?
+                    $"Company with name '{company.Name}'" :
+                    $"Comapny with ticker '{company.Ticker}'";
+                return new GetByCompanyResponse($"{exceptionMessage} already exitst");
+            }
+            else
+            {
+                var quotes = await Task.WhenAll(_moexGrabberService.GrabCompanyQuote(company),
+                    _finhubGrabberService.GrabCompanyQuote(company));
+                return (quotes.Any(quote => quote != null)) ?
+                    new GetByCompanyResponse(quotes) :
+                    new GetByCompanyResponse($"Ticker '{company.Ticker}' not found");
+            }
+        }
     }
 }

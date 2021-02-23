@@ -307,3 +307,24 @@ h5 {
 .suggested-bar{
     margin: 10px 0;
 }
+
+.error-message{
+    white-space: pre-line;
+}
+
+.add-company-btn{
+    background-color: #f0b90b;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    width: 100px;
+}
+
+.add-company-btn:hover{
+    border: solid black 2px;
+}
+
+.add-company-btn:disabled{
+    background-color: gray;
+    color: black;
+}

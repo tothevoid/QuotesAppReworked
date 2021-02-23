@@ -20,7 +20,6 @@ namespace QuotesExchangeApp.Controllers
         private readonly ILogger<QuotesController> _logger;
         private readonly ApplicationDbContext _context;
    
-
         public CompanyController(ILogger<QuotesController> logger, ApplicationDbContext db)
         {
             _logger = logger;
@@ -35,19 +34,11 @@ namespace QuotesExchangeApp.Controllers
         {
             if (quote.Company != null && quote.Source != null)
             {
-                try
-                {
-                    var company = await _context.Companies.AddAsync(quote.Company);
-                    await _context.SupportedCompanies
-                           .AddAsync(new SupportedCompany { CompanyId = quote.Company.Id, SourceId = quote.Source.Id});
-                    await _context.SaveChangesAsync();
-                    return company.Entity;
-                }
-                catch (Exception ex)
-                {
-                    return null;
-                }
-                
+                var company = await _context.Companies.AddAsync(quote.Company);
+                await _context.SupportedCompanies
+                       .AddAsync(new SupportedCompany { CompanyId = quote.Company.Id, SourceId = quote.Source.Id });
+                await _context.SaveChangesAsync();
+                return company.Entity;
             }
             return null;
         }

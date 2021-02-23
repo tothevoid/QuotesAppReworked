@@ -1,5 +1,3 @@
-import { ApplicationPaths, ApplicationName } from './ApiAuthorizationConstants';
-
 export class AuthorizeService {
     _callbacks = [];
     _nextSubscriptionId = 0;
@@ -14,8 +12,7 @@ export class AuthorizeService {
     async getIdentity() {
         const token = localStorage.getItem("token");
         if (token){
-            const jwt = this.parseJwt(token);
-            if (jwt.exp && jwt.exp * 1000 <= Date.now()){
+            if (this.checkIsTokenExpired(token)){
                 localStorage.setItem("token", "");
                 return "";
             }
@@ -24,6 +21,10 @@ export class AuthorizeService {
         return "";
     }
 
+    checkIsTokenExpired(token){
+        const jwt = this.parseJwt(token);
+        return (!jwt || (jwt.exp && jwt.exp * 1000 <= Date.now()));
+    }
 
     async getAccessToken() {
         return this.getIdentity();
@@ -31,7 +32,7 @@ export class AuthorizeService {
 
     async getUser() {
         const token = localStorage.getItem("token");
-        if (token){
+        if (token && !this.checkIsTokenExpired(token)){
             const userNameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
             const jwt = await this.parseJwt(token);
             return (jwt && jwt[userNameClaim]) ? jwt[userNameClaim] : "";
